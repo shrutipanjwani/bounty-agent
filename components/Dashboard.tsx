@@ -1,37 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import { Clock, Trophy, Coins, ImagePlus } from "lucide-react";
+import { Clock, Trophy, Coins } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useBountyData } from "@/hooks/useBountyData";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("current");
+  const { currentBounty, previousBounties, stats, loading, error } =
+    useBountyData();
 
-  // Sample data
-  const currentBounty = {
-    day: 45,
-    amount: "0.001 ETH",
-    tokenAmount: "1000 $AGENT",
-    description:
-      "Take a photo of you doing a random act of kindness in your local community",
-    timeLeft: "8 hours",
-    submissions: 12,
-  };
+  console.log("previousBounties: ", previousBounties);
 
-  const previousBounties = [
-    {
-      day: 44,
-      winner: "0x1234...5678",
-      task: "Create street art with AI",
-      proof: "/api/placeholder/400/300",
-    },
-    {
-      day: 43,
-      winner: "0x8765...4321",
-      task: "Help a local business with tech",
-      proof: "/api/placeholder/400/300",
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 p-4">Error: {error}</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
@@ -43,7 +34,9 @@ const Dashboard = () => {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45/100</div>
+            <div className="text-2xl font-bold">
+              {stats?.currentDay || 0}/100
+            </div>
             <p className="text-xs text-muted-foreground">Days Complete</p>
           </CardContent>
         </Card>
@@ -54,7 +47,7 @@ const Dashboard = () => {
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0.045 ETH</div>
+            <div className="text-2xl font-bold">{stats?.totalRewards}</div>
             <p className="text-xs text-muted-foreground">Distributed So Far</p>
           </CardContent>
         </Card>
@@ -65,14 +58,13 @@ const Dashboard = () => {
             <Coins className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4.5%</div>
+            <div className="text-2xl font-bold">{stats?.tokenDistribution}</div>
             <p className="text-xs text-muted-foreground">
               Of Supply Distributed
             </p>
           </CardContent>
         </Card>
       </div>
-
       {/* Navigation */}
       <div className="flex space-x-2 border-b">
         <button
@@ -92,68 +84,71 @@ const Dashboard = () => {
           Previous Winners
         </button>
       </div>
-
       {/* Content */}
-      {activeTab === "current" ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Day {currentBounty.day} Bounty</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-lg font-bold">
-                  {currentBounty.amount} + {currentBounty.tokenAmount}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Time Left: {currentBounty.timeLeft}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">
-                  {currentBounty.submissions} Submissions
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p className="font-medium">Today&apos;s Task:</p>
-              <p>{currentBounty.description}</p>
-            </div>
-
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
-              <ImagePlus className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-2">Drop your proof here or click to upload</p>
-              <p className="text-sm text-muted-foreground">
-                Supports images up to 5MB
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
+      {activeTab === "previous" ? (
         <div className="space-y-4">
-          {previousBounties.map((bounty, index) => (
+          {previousBounties?.map((bounty, index) => (
             <Card key={index}>
               <CardContent className="pt-6">
-                <div className="flex items-start space-x-4">
-                  <img
-                    src={bounty.proof}
-                    alt={`Day ${bounty.day} winning submission`}
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
+                <div className="flex flex-col space-y-2">
                   <div>
                     <p className="font-medium">Day {bounty.day} Winner</p>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Winner: {bounty.winner}
+                      Winner:{" "}
+                      {bounty.winner
+                        ? `${bounty.winner.slice(0, 6)}...${bounty.winner.slice(
+                            -4
+                          )}`
+                        : "No winner yet"}
                     </p>
                     <p className="text-sm">Task: {bounty.task}</p>
+                    <p className="text-sm">Description: {bounty.description}</p>
+                    <p className="text-sm">
+                      Reward: {bounty.amount} + {bounty.tokenAmount}
+                    </p>
+                    <p className="text-sm">{bounty.created_at}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
+          {previousBounties.length === 0 && (
+            <p className="text-center text-muted-foreground">
+              No previous bounties found
+            </p>
+          )}
         </div>
-      )}
+      ) : (
+        currentBounty && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Day {currentBounty.day} Bounty</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-lg font-bold">
+                    {currentBounty.amount} + {currentBounty.tokenAmount}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Time Left: {currentBounty.timeLeft}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">
+                    {currentBounty.submissions} Submissions
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-medium">Today&apos;s Task:</p>
+                <p>{currentBounty.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      )}{" "}
     </div>
   );
 };
