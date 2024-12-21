@@ -1,15 +1,18 @@
 "use client";
 
 import React from "react";
-import { Trophy, Coins } from "lucide-react";
+import { Trophy, Coins, SquareArrowOutUpRightIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBountyData } from "@/hooks/useBountyData";
 import CountdownTimer from "@/components/CountdownTimer";
 import WinnersBoard from "@/components/WinnersBoard";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   // const [activeTab, setActiveTab] = useState("current");
+  const router = useRouter();
   const { currentBounty, previousBounties, stats, loading, error } =
     useBountyData();
 
@@ -58,7 +61,7 @@ const Dashboard = () => {
       <CountdownTimer nextRoundTime={nextRoundTime.toISOString()} />
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-white shadow-md">
+        <Card className="bg-white rounded-[20px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Rewards
@@ -67,13 +70,17 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-gray-900">
-              {stats?.totalRewards}
+              {/* {stats?.totalRewards} */}
+              {previousBounties
+                ?.reduce((acc, bounty) => acc + parseFloat(bounty.amount), 0)
+                .toFixed(3)}{" "}
+              ETH
             </div>
             <p className="text-xs text-gray-500">Distributed So Far</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-md">
+        <Card className="bg-white rounded-[20px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Token Status
@@ -91,10 +98,10 @@ const Dashboard = () => {
 
       {/* Current Bounty */}
       {currentBounty && (
-        <Card className="bg-white shadow-md">
+        <Card className="bg-white rounded-[20px]">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-800">
-              Current Bounty Challenge
+              {stats?.currentDay || 0}/100 Bounty
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -120,6 +127,16 @@ const Dashboard = () => {
               </p>
               <p className="text-gray-600">{currentBounty.description}</p>
             </div>
+            <Button
+              variant="link"
+              onClick={() =>
+                router.push(
+                  `https://poidh.xyz/degen/bounty/${currentBounty.id}`
+                )
+              }
+            >
+              View Bounty on POIDH <SquareArrowOutUpRightIcon />
+            </Button>
           </CardContent>
         </Card>
       )}

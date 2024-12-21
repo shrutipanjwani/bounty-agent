@@ -9,7 +9,7 @@ interface WinnersBoardProps {
 
 const WinnersBoard: React.FC<WinnersBoardProps> = ({ previousBounties }) => {
   return (
-    <Card className="bg-white shadow-md">
+    <Card className="bg-white rounded-[20px]">
       <CardHeader>
         <CardTitle className="text-xl font-semibold text-gray-800">
           Previous Winners
@@ -28,7 +28,6 @@ const WinnersBoard: React.FC<WinnersBoardProps> = ({ previousBounties }) => {
               {previousBounties
                 ?.reduce((acc, bounty) => acc + parseFloat(bounty.amount), 0)
                 .toFixed(3)}{" "}
-              ETH
             </div>
             <div className="text-sm text-gray-600">Total Distributed</div>
           </div>
