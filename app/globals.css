@@ -9,8 +9,32 @@
   }
 }
 
+@font-face {
+  font-family: "OG";
+  src: url("/fonts/og.woff2") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OG Bold";
+  src: url("/fonts/og-bold.woff2") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OG Medium";
+  src: url("/fonts/og-medium.woff2") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OG Simple";
+  src: url("/fonts/og-simple.woff2") format("opentype");
+  font-display: swap;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "OG Simple";
 }
 
 @layer base {

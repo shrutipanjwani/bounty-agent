@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Clock, Trophy, Coins } from "lucide-react";
+import React from "react";
+import { Trophy, Coins } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBountyData } from "@/hooks/useBountyData";
+import CountdownTimer from "@/components/CountdownTimer";
+import WinnersBoard from "@/components/WinnersBoard";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("current");
+  // const [activeTab, setActiveTab] = useState("current");
   const { currentBounty, previousBounties, stats, loading, error } =
     useBountyData();
 
@@ -24,10 +26,95 @@ const Dashboard = () => {
     return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
+  // Calculate next round time based on current bounty creation time
+  const nextRoundTime = currentBounty?.created_at
+    ? new Date(
+        new Date(currentBounty.created_at).getTime() + 24 * 60 * 60 * 1000
+      )
+    : new Date();
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">$MADHAT</h1>
+        <p className="text-gray-600">Daily Bounties for the Distinguished</p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <CountdownTimer nextRoundTime={nextRoundTime.toISOString()} />
+
+        <Card className="bg-white shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Rewards
+            </CardTitle>
+            <Trophy className="h-4 w-4 text-gray-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {stats?.totalRewards}
+            </div>
+            <p className="text-xs text-gray-500">Distributed So Far</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Token Status
+            </CardTitle>
+            <Coins className="h-4 w-4 text-gray-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {stats?.tokenDistribution}
+            </div>
+            <p className="text-xs text-gray-500">Of Supply Distributed</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Current Bounty */}
+      {currentBounty && (
+        <Card className="bg-white shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold text-gray-800">
+              Current Bounty Challenge
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-2xl font-bold text-gray-900">
+                  {currentBounty.amount} + {currentBounty.tokenAmount}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Time Left: {currentBounty.timeLeft}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">
+                  {currentBounty.submissions} Submissions
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 bg-gray-50 p-4 rounded-lg">
+              <p className="font-medium text-gray-700">
+                Today&apos;s Challenge:
+              </p>
+              <p className="text-gray-600">{currentBounty.description}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Winners Board */}
+      <WinnersBoard previousBounties={previousBounties} />
+
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Current Day</CardTitle>
@@ -65,7 +152,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-      {/* Navigation */}
+
       <div className="flex space-x-2 border-b">
         <button
           className={`px-4 py-2 ${
@@ -84,7 +171,6 @@ const Dashboard = () => {
           Previous Winners
         </button>
       </div>
-      {/* Content */}
       {activeTab === "previous" ? (
         <div className="space-y-4">
           {previousBounties?.map((bounty, index) => (
@@ -148,7 +234,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         )
-      )}{" "}
+      )}{" "} */}
     </div>
   );
 };
