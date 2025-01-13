@@ -35,7 +35,7 @@ export async function GET() {
             }}
           >
             {/* You can add your MADHAT logo here */}
-            Go Mad, Get $MADHAT
+            Go Mad, Get $MAD
           </div>
 
           <div
@@ -54,7 +54,7 @@ export async function GET() {
               {bounty?.description || "Loading next bounty..."}
             </div>
             <div style={{ fontSize: 28, color: "#0070f3", marginTop: "20px" }}>
-              {bounty?.amount} ETH + {bounty?.tokenAmount} $MADHAT
+              {bounty?.amount} Degen + {bounty?.tokenAmount} $MAD
             </div>
           </div>
         </div>

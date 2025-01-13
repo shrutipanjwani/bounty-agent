@@ -3,9 +3,9 @@ export async function GET() {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Mad Hatter Daily Bounties</title>
-          <meta property="og:title" content="Mad Hatter Daily Bounties" />
-          <meta property="og:description" content="Daily challenges for ETH + $MADHAT" />
+          <title>MadHat Daily Bounties</title>
+          <meta property="og:title" content="MadHat Daily Bounties" />
+          <meta property="og:description" content="Daily challenges for Degen + $MAD" />
           <meta property="og:image" content="${process.env.NEXT_PUBLIC_API_BASE_URL}/api/frame/image" />
           
           <!-- Required Frame meta tags -->
@@ -16,7 +16,7 @@ export async function GET() {
           <meta property="fc:frame:post_url" content="${process.env.NEXT_PUBLIC_API_BASE_URL}/api/frame" />
         </head>
         <body>
-          <p>Mad Hatter Daily Bounties</p>
+          <p>MadHat Daily Bounties</p>
         </body>
       </html>
     `;

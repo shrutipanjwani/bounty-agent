@@ -12,6 +12,7 @@ export interface CurrentBounty {
   issuer?: string;
   claimer?: string;
   claimId?: string;
+  poidhUrl: string;
 }
 
 export interface Stats {
@@ -29,6 +30,25 @@ export interface PreviousBounty {
   tokenAmount: string;
   created_at: string;
   task: string;
+  transactionHash?: string;
+}
+
+export interface Bounty {
+  id: string;
+  day: number;
+  winner: string | null;
+  amount: string;
+  tokenAmount: string;
+  poidhUrl: string | null;
+  explorerUrl: string | null;
+  winnerDisplayAddress: string;
+  hasWinner: boolean;
+  title: string;
+  description: string;
+}
+
+export interface WinnersBoardProps {
+  previousBounties: PreviousBounty[];
 }
 
 export interface APIResponse<T> {

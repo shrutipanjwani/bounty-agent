@@ -5,31 +5,39 @@ interface CountdownTimerProps {
 }
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ nextRoundTime }) => {
-  const [timeLeft, setTimeLeft] = useState<string>("");
+  const [timeLeft, setTimeLeft] = useState('00:00:00');
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const target = new Date(nextRoundTime).getTime();
-      const difference = target - now;
+      try {
+        // Use actual current time
+        const now = Date.now(); // Current timestamp
+        const target = new Date(nextRoundTime).getTime();
+        const difference = target - now;
 
-      if (difference > 0) {
-        const hours = Math.floor(
-          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor(
-          (difference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        // Debug logging
+        console.log({
+          currentTime: new Date().toISOString(),
+          targetTime: new Date(target).toISOString(),
+          difference: Math.floor(difference / 1000), // in seconds
+        });
 
-        setTimeLeft(
-          `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-            2,
-            "0"
-          )}:${String(seconds).padStart(2, "0")}`
-        );
-      } else {
-        setTimeLeft("00:00:00");
+        if (difference > 0) {
+          const hours = Math.floor(difference / (1000 * 60 * 60));
+          const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+          const formattedTime = [hours, minutes, seconds]
+            .map(unit => unit.toString().padStart(2, '0'))
+            .join(':');
+
+          setTimeLeft(formattedTime);
+        } else {
+          setTimeLeft('00:00:00');
+        }
+      } catch (error) {
+        console.error('Error calculating time:', error);
+        setTimeLeft('00:00:00');
       }
     };
 

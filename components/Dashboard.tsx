@@ -18,6 +18,31 @@ const Dashboard = () => {
 
   console.log("previousBounties: ", previousBounties);
 
+  const calculateNextRoundTime = (createdAt: string) => {
+    // Parse the created_at string
+    const [dateStr, timeStr] = createdAt.split(' ');
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    
+    // Create date object and add 24 hours
+    const date = new Date(year, month - 1, day, hours, minutes, seconds);
+    const nextRound = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+    
+    console.log({
+      createdAt,
+      parsedDate: date.toISOString(),
+      nextRound: nextRound.toISOString()
+    });
+    
+    return nextRound.toISOString();
+  };
+
+  const nextRoundTime = currentBounty?.created_at 
+    ? calculateNextRoundTime(currentBounty.created_at)
+    : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+  console.log("Final nextRoundTime:", nextRoundTime);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -30,19 +55,13 @@ const Dashboard = () => {
     return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
-  // Calculate next round time based on current bounty creation time
-  const nextRoundTime = currentBounty?.created_at
-    ? new Date(
-        new Date(currentBounty.created_at).getTime() + 24 * 60 * 60 * 1000
-      )
-    : new Date();
-
+  
   return (
     <div className="max-w-xl mx-auto p-4 space-y-6">
       {/* Header */}
       <div className="text-center mb-8 mt-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center">
-          <p> Go Mad, Get $MADHAT </p>
+          <p> Go Mad, Get $MAD </p>
           <Image
             src="/favicon.png"
             alt="madhat"
@@ -58,7 +77,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <CountdownTimer nextRoundTime={nextRoundTime.toISOString()} />
+      <CountdownTimer nextRoundTime={nextRoundTime} />
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-white rounded-[20px]">
@@ -69,12 +88,12 @@ const Dashboard = () => {
             <Trophy className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900">
               {/* {stats?.totalRewards} */}
               {previousBounties
                 ?.reduce((acc, bounty) => acc + parseFloat(bounty.amount), 0)
                 .toFixed(3)}{" "}
-              ETH
+              DEGEN
             </div>
             <p className="text-xs text-gray-500">Distributed So Far</p>
           </CardContent>
@@ -87,11 +106,17 @@ const Dashboard = () => {
             </CardTitle>
             <Coins className="h-4 w-4 text-gray-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-gray-900">
+          {/* <CardContent>
+            <div className="text-2xl font-bold text-gray-900">
               {stats?.tokenDistribution}
             </div>
             <p className="text-xs text-gray-500">Of Supply Distributed</p>
+          </CardContent> */}
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-900">
+              Coming Soon
+            </div>
+            <p className="text-xs text-gray-500">Launching after 100 days</p>
           </CardContent>
         </Card>
       </div>
@@ -108,7 +133,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-2xl font-bold text-gray-900">
-                  {currentBounty.amount} + {currentBounty.tokenAmount}
+                  {currentBounty.amount} 
                 </p>
                 <p className="text-sm text-gray-500">
                   Time Left: {currentBounty.timeLeft}
@@ -129,11 +154,7 @@ const Dashboard = () => {
             </div>
             <Button
               variant="link"
-              onClick={() =>
-                router.push(
-                  `https://poidh.xyz/degen/bounty/${currentBounty.id}`
-                )
-              }
+              onClick={() => router.push(currentBounty.poidhUrl)}
             >
               View Bounty on POIDH <SquareArrowOutUpRightIcon />
             </Button>
