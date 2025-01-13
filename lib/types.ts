@@ -22,6 +22,7 @@ export interface Stats {
 }
 
 export interface PreviousBounty {
+  id: string;
   day: number;
   title: string;
   description: string;

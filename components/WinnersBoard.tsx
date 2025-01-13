@@ -2,10 +2,11 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import type { WinnersBoardProps } from "@/lib/types";
+import type { PreviousBounty, WinnersBoardProps } from "@/lib/types";
 
 const WinnersBoard: React.FC<WinnersBoardProps> = ({ previousBounties }) => {
-  const formatBountyForDisplay = (bounty: any) => {
+
+  const formatBountyForDisplay = (bounty: PreviousBounty) => {
     const poidhUrl = bounty.id ? 
       `https://poidh.xyz/degen/bounty/${bounty.id}` : null;
     
